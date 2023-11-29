@@ -1,5 +1,4 @@
 {
-  {
   "name": "pacific-lake-00352",
   "version": "1.0.0",
   "main": "app.js",
@@ -10,6 +9,4 @@
     "express": "^4.18.2",
     "mongoose": "^8.0.0"
   }
-
-  
 }
