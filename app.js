@@ -30,15 +30,21 @@ async function run() {
 
 run().catch(console.dir);
 // Define schemas
+
 const AccountSchema = new mongoose.Schema({
   accountNumber: { type: String, unique: true },
+  name: String,
+  password: String,
   joinDate: { type: Date, default: Date.now },
   rewardTypeLastRedeemed: String,
   xpAmount: { type: Number, default: 0 },
-  milesAmount: { type: Number, default: 0 },
-  walmartAmount: { type: Number, default: 0 },
-  amazonAmount: { type: Number, default: 0 },
-  lastRedeemTime: { type: Date, default: null },
+  level: { type: Number, default: 1 },
+  checkingAmount: { type: Number, default: Math.floor(Math.random() * 10000) + 1000 },
+  savingsAmount: { type: Number, default: Math.floor(Math.random() * 50000) + 5000 },
+  miles: { type: Number, default: 0 },
+  walmartCredits: { type: Number, default: 0 },
+  amazonCredits: { type: Number, default: 0 },
+  targetCredits: { type: Number, default: 0 },
 });
 
 // Create mongoose model
@@ -50,6 +56,7 @@ app.use(bodyParser.json());
 // Define routes
 
 // Create a new account
+/*
 app.post('/api/account', async (req, res) => {
   try {
     const newAccount = new Account(req.body);
@@ -59,7 +66,153 @@ app.post('/api/account', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+*/
 
+// Create an Account with random data
+app.post('/api/account/createRandomAccount', async (req, res) => {
+  try {
+    const { name, password } = req.body;
+
+    const newAccount = new Account({
+      accountNumber: Math.random().toString(36).substring(7),
+      name,
+      password,
+    });
+
+    const savedAccount = await newAccount.save();
+    res.json(savedAccount);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/account/changeXP', async (req, res) => {
+  try {
+    const { accountNumber, password, xpAmount } = req.body;
+    const account = await Account.findOneAndUpdate(
+      { accountNumber, password },
+      { xpAmount },
+      { new: true }
+    );
+
+    if (!account) {
+      return res.status(404).json({ error: 'Account not found or password incorrect' });
+    }
+
+    res.json({ xpAmount: account.xpAmount });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+app.post('/api/account/increaseLevel', async (req, res) => {
+  try {
+    const { accountNumber, password } = req.body;
+    const account = await Account.findOneAndUpdate(
+      { accountNumber, password },
+      { $inc: { level: 1 } },
+      { new: true }
+    );
+
+    if (!account) {
+      return res.status(404).json({ error: 'Account not found or password incorrect' });
+    }
+
+    res.json({ level: account.level });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/account/increaseCapitalOneMiles', async (req, res) => {
+  try {
+    const { accountNumber, password, miles } = req.body;
+    const account = await Account.findOneAndUpdate(
+      { accountNumber, password },
+      { $inc: { miles } },
+      { new: true }
+    );
+
+    if (!account) {
+      return res.status(404).json({ error: 'Account not found or password incorrect' });
+    }
+
+    res.json({ miles: account.miles });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/account/increaseWalmartCredits', async (req, res) => {
+  try {
+    const { accountNumber, password, walmartCredits } = req.body;
+    const account = await Account.findOneAndUpdate(
+      { accountNumber, password },
+      { $inc: { walmartCredits } },
+      { new: true }
+    );
+
+    if (!account) {
+      return res.status(404).json({ error: 'Account not found or password incorrect' });
+    }
+
+    res.json({ walmartCredits: account.walmartCredits });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/account/increaseAmazonCredits', async (req, res) => {
+  try {
+    const { accountNumber, password, amazonCredits } = req.body;
+    const account = await Account.findOneAndUpdate(
+      { accountNumber, password },
+      { $inc: { amazonCredits } },
+      { new: true }
+    );
+
+    if (!account) {
+      return res.status(404).json({ error: 'Account not found or password incorrect' });
+    }
+
+    res.json({ amazonCredits: account.amazonCredits });
+  } catch (error) {
+    res.status(500).json({ error: error.message});
+  }
+});
+
+// Increase Target Credits
+app.post('/api/account/increaseTargetCredits', async (req, res) => {
+  try {
+    const { accountNumber, password, targetCredits } = req.body;
+    const account = await Account.findOneAndUpdate(
+      { accountNumber, password },
+      { $inc: { targetCredits } },
+      { new: true }
+    );
+
+    if (!account) {
+      return res.status(404).json({ error: 'Account not found or password incorrect' });
+    }
+
+    res.json({ targetCredits: account.targetCredits });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+// VERSION 1 Implementation 
+/*
 // Get account details by account number
 app.get('/api/account/:accountNumber', async (req, res) => {
   try {
@@ -289,8 +442,9 @@ app.post('/api/account/:accountNumber/increaseXP', async (req, res) => {
 
 
 // ... (other routes)
-
+*/
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
