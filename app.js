@@ -31,6 +31,19 @@ async function run() {
 run().catch(console.dir);
 // Define schemas
 
+// V2 of API schema
+/*
+const AccountSchema = new mongoose.Schema({
+  accountNumber: { type: String, unique: true },
+  joinDate: { type: Date, default: Date.now },
+  rewardTypeLastRedeemed: String,
+  xpAmount: { type: Number, default: 0 },
+  milesAmount: { type: Number, default: 0 },
+  walmartAmount: { type: Number, default: 0 },
+  amazonAmount: { type: Number, default: 0 },
+  lastRedeemTime: { type: Date, default: null },
+});*/
+
 const AccountSchema = new mongoose.Schema({
   accountNumber: { type: String, unique: true },
   name: String,
@@ -194,6 +207,96 @@ app.post('/api/account/increaseTargetCredits', async (req, res) => {
 
     if (!account) {
       return res.status(404).json({ error: 'Account not found or password incorrect' });
+    }
+
+    res.json({ targetCredits: account.targetCredits });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Retrieve XP Amount
+app.get('/api/account/:accountNumber/xp', async (req, res) => {
+  try {
+    const account = await Account.findOne({ accountNumber: req.params.accountNumber });
+
+    if (!account) {
+      return res.status(404).json({ error: 'Account not found' });
+    }
+
+    res.json({ xpAmount: account.xpAmount });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Retrieve Level
+app.get('/api/account/:accountNumber/level', async (req, res) => {
+  try {
+    const account = await Account.findOne({ accountNumber: req.params.accountNumber });
+
+    if (!account) {
+      return res.status(404).json({ error: 'Account not found' });
+    }
+
+    res.json({ level: account.level });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Retrieve Capital One Miles
+app.get('/api/account/:accountNumber/capitalOneMiles', async (req, res) => {
+  try {
+    const account = await Account.findOne({ accountNumber: req.params.accountNumber });
+
+    if (!account) {
+      return res.status(404).json({ error: 'Account not found' });
+    }
+
+    res.json({ miles: account.miles });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Retrieve Walmart Credits
+app.get('/api/account/:accountNumber/walmartCredits', async (req, res) => {
+  try {
+    const account = await Account.findOne({ accountNumber: req.params.accountNumber });
+
+    if (!account) {
+      return res.status(404).json({ error: 'Account not found' });
+    }
+
+    res.json({ walmartCredits: account.walmartCredits });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Retrieve Amazon Credits
+app.get('/api/account/:accountNumber/amazonCredits', async (req, res) => {
+  try {
+    const account = await Account.findOne({ accountNumber: req.params.accountNumber });
+
+    if (!account) {
+      return res.status(404).json({ error: 'Account not found' });
+    }
+
+    res.json({ amazonCredits: account.amazonCredits });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Retrieve Target Credits
+app.get('/api/account/:accountNumber/targetCredits', async (req, res) => {
+  try {
+    const account = await Account.findOne({ accountNumber: req.params.accountNumber });
+
+    if (!account) {
+      return res.status(404).json({ error: 'Account not found' });
     }
 
     res.json({ targetCredits: account.targetCredits });
