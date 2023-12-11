@@ -355,6 +355,22 @@ app.post('/api/account/increaseLevelByAmountWithoutPassword', async (req, res) =
   }
 });
 
+// Display all information for a given account number
+app.get('/api/account/:accountNumber', async (req, res) => {
+  try {
+    const account = await Account.findOne({ accountNumber: req.params.accountNumber });
+
+    if (!account) {
+      return res.status(404).json({ error: 'Account not found' });
+    }
+
+    res.json(account);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 
 
 
