@@ -333,7 +333,7 @@ app.post('/api/account/changeXPWithoutPassword', async (req, res) => {
 // Increase level by a specified amount without requiring password
 app.post('/api/account/increaseLevelByAmountWithoutPassword', async (req, res) => {
   try {
-    const { accountNumber, levelAmount } = req.body;
+    const { accountNumber, level } = req.body;
     
     // Find the account by account number
     const account = await Account.findOne({ accountNumber });
@@ -344,7 +344,7 @@ app.post('/api/account/increaseLevelByAmountWithoutPassword', async (req, res) =
     }
 
     // Update the level by the specified amount
-    account.level = levelAmount;
+    account.level = level;
 
     // Save the updated account
     const updatedAccount = await account.save();
